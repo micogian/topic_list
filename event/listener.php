@@ -183,19 +183,6 @@ class listener implements EventSubscriberInterface
 					$first_row[$i]			= false ;
 				}
 				
-				echo $current_char . " - " . $first_row[$i] . "<br>"; 
-				/*
-				if($bg_row == "bg2")
-				{
-					$row_bg[$i]				= "bg3";
-					$bg_row					= "bg3";
-				}else{
-					$row_bg[$i]				= "bg2";
-					$bg_row					= "bg2";
-				}
-				*/
-				//$replies = $phpbb_content_visibility->get_count('topic_posts', $row1, $row1['forum_id']) - 1;
-				//echo "Replies; " . $replies . "<br>";
 				$topic_icon_img[$i]			= (!empty($icons[$row1['icon_id']])) ? "images/icons/".$icons[$row1['icon_id']]['img'] : 'ext/micogian/topic_list/images/empty.gif';
 				$forum_id[$i]				= $row1['forum_id'];
 				$icon_id[$i]				= $row1['icon_id'];
