@@ -32,8 +32,8 @@
             <ul class="topiclist">
 				<li class="header">
                     <dl>
-						<dd style="text-align: left; width: 2%;">&nbsp;</dd>
-						<dd style="text-align: left; width: 35%;">&nbsp;&nbsp;{L_TOPIC_TITLE}</dd>
+						<dt style="width: 3%;"></dt>
+						<dd style="text-align: left; width: 37%;">&nbsp;&nbsp;{L_TOPIC_TITLE}</dd>
 						<dd style="text-align: left; width: 25%;">&nbsp;Nome del Forum</dd>
 						<dd style="text-align: center; width:12%;">&nbsp;Autore - Data</dd>
 						<dd style="text-align: center; width:6%;">&nbsp;{L_REPLIES}</dd> 
@@ -57,12 +57,13 @@
 			<ul class="topiclist forums">     
 				<li class="bg_row">
 					<dl>
+						<dt></dt>
 						<dd style="text-align: left; width: 2%;">{topic_list.TOPIC_ICON_IMG}</dd>
 						<dd style="text-align: left; width: 35%;"><a class="forumtitle" href="{topic_list.TOPIC_LINK}">{topic_list.TOPIC_TITLE}</a></dd>
 						<dd style="text-align: left; width: 25%;"><a class="forumtitle" href="{topic_list.FORUM_LINK}">{topic_list.FORUM_NAME}</a></dd>
 						<dd style="text-align: center; width: 12%;"><span>{topic_list.TOPIC_AUTHOR_FULL}<br>{topic_list.FIRST_POST_TIME}</span></dd>
-						<dd style="text-align: center; width: 6%;">{topic_list.REPLIES}</dd>
-						<dd style="text-align: center; width: 6%;">{topic_list.VIEWS}</dd>
+						<dd style="text-align: center; width: 6%;">{topic_list.TOPIC_REPLIES}</dd>
+						<dd style="text-align: center; width: 6%;">{topic_list.TOPIC_VIEWS}</dd>
 						<dd style="text-align: center; width: 12%;">{topic_list.LAST_POST_AUTHOR_FULL} <a href='{topic_list.LAST_POST_LINK}' title='Apri ultimo messaggio' >
 							<i class='icon fa-external-link-square fa-fw icon-lightgray icon-md' aria-hidden='true'></i><span class='sr-only'>Vedi ultimo messaggio</span>	</a>					
 							<br>{topic_list.LAST_POST_TIME}
