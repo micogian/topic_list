@@ -1,0 +1,77 @@
+/* style mod_topic_list by Micogian
+---------------------------------------- */
+.nav_alfa span a, .nav_alfa span a:link, .nav_alfa span a:visited, .nav_alfa span a:active {
+    font-weight: normal;
+    text-decoration: none;
+    color: #000080;
+    margin: 0 2px;
+    padding: 0 2px;
+    background-color: #eeeeee;
+    border: 1px solid #bababa;
+    font-size: 1.3em;
+    line-height: 1.8em;
+}
+.nav_alfa span a:hover {
+    border-color: #000080;
+    background-color: #c0c0c0;
+    color: #FF0000;
+    text-decoration: none;
+}
+#tab_left{
+   margin: 1px;
+   text-align: left;
+   float: left;
+   text-decoration: none;
+}
+
+#tab_right{
+   margin: 1px;
+   text-align: right;
+   float: right;
+   text-decoration: none;
+}
+#list_left{
+   margin: 1px;
+   text-align: left;
+   float: left;
+   text-decoration: none;
+}
+
+#list_right{
+   margin: 1px;
+   text-align: right;
+   float: right;
+   text-decoration: none;
+}
+.char_left{
+   font-size: 2em;
+   color: #000080;
+   margin: 1px;
+   text-align: left;
+   float: left;
+   text-decoration: none;
+}
+
+.char_right{
+   margin: 1px;
+   text-align: right;
+   float: right;
+   text-decoration: none;
+}
+.first_char {
+   font-size: 1.5em;
+   padding: 2px;
+}
+.bg_row {
+    background-color: #F9F9F9;
+	border-top: 1px solid #c1c1c1;
+}
+.postprofile{
+	display: none;
+}
+.postbody{
+	width: 99%;
+}
+.online {
+    background-image: none;
+}
