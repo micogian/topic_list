@@ -182,14 +182,15 @@ class listener implements EventSubscriberInterface
 				}else{
 					$first_row[$i]			= false ;
 				}
-				
 				$topic_icon_img[$i]			= (!empty($icons[$row1['icon_id']])) ? "images/icons/".$icons[$row1['icon_id']]['img'] : 'ext/micogian/topic_list/images/empty.gif';
+				$topic_id[$i]				= $row1['topic_id'];
 				$forum_id[$i]				= $row1['forum_id'];
 				$icon_id[$i]				= $row1['icon_id'];
 				$topic_title[$i]			= $row1['topic_title'];
 				$topic_link[$i]				= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", 't='.$row1['topic_id']);
 				$forum_link[$i]				= append_sid("{$this->root_path}viewforum.{$this->phpEx}", 'f='.$row1['forum_id']);
 				$forum_name_cor[$i]			= $row1['forum_name_cor'];
+				$topic_replies[$i]			= $row1['topic_replies'];
 				$topic_views[$i]			= $row1['topic_views'];
 				$topic_author[$i]			= $row1['topic_first_poster_name'];
 				$topic_author_full[$i]		= get_username_string('full', $row1['topic_poster'], $row1['topic_first_poster_name'], $row1['topic_first_poster_colour']);
@@ -197,7 +198,12 @@ class listener implements EventSubscriberInterface
 				$last_post_time[$i]			= $this->user->format_date($row1['topic_last_post_time']);
 				$last_post_author_full[$i]	= get_username_string('full', $row1['topic_last_poster_id'], $row1['topic_last_poster_name'], $row1['topic_last_poster_colour']);
 				$last_post_link[$i]			= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", "f=" . $row1['forum_id'] . "&amp;p=" . $row1['topic_last_post_id'] . "#p" . $row1['topic_last_post_id']);
-
+				
+				$reply = "SELECT COUNT(post_id) AS tot_replies FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
+				$result2 = $this->db->sql_query($reply);
+				$row2 = $this->db->sql_fetchrow($result2);
+				$topic_replies[$i]			= $row2[tot_replies] - 1;
+				
 				$this->template->assign_block_vars('topic_list', array(
 				'S_FIRST_ROW'          	 	=> $first_row[$i],
 				'BG_ROW'           			=> $bg_row,
@@ -207,7 +213,8 @@ class listener implements EventSubscriberInterface
 				'TOPIC_LINK'            	=> append_sid("{$phpbb_root_path}viewtopic.$this->phpEx", 't='.$row1['topic_id']),
 				'FORUM_LINK'		 		=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
 				'FORUM_NAME'        		=> $forum_name_cor[$i],
-				'VIEWS'         	    	=> $topic_views[$i],
+				'TOPIC_REPLIES'         	=> $topic_replies[$i],
+				'TOPIC_VIEWS'         	    => $topic_views[$i],
 				'TOPIC_AUTHOR'          	=> $topic_author[$i],
 				'TOPIC_AUTHOR_FULL'     	=> $topic_author_full[$i],
 				'FIRST_POST_TIME'       	=> $first_post_time[$i],
