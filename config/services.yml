@@ -1,0 +1,13 @@
+services:
+    micogian.topic_list.listener:
+        class: micogian\topic_list\event\listener
+        arguments:
+            - @dbal.conn
+            - @template
+            - @auth
+            - @user
+            - @cache			
+            - %core.root_path%
+            - %core.php_ext%
+        tags:
+            - { name: event.listener }
