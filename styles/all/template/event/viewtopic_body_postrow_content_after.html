@@ -49,8 +49,8 @@
 			<!-- BEGIN topic_list -->
 			<!-- IF topic_list.S_FIRST_ROW == 1 -->
 			<div>	
-                <div id="list_left" class="first_char"><a id="t{topic_list.FIRST_CHAR}">&nbsp;</a>{topic_list.FIRST_CHAR}</div>
-				<div id="list_right" class="top"><a href='#top'  title='Top'><i class='icon fa-chevron-circle-up fa-fw icon-gray' aria-hidden='true'></i><span class='sr-only'>Top</span></a></div>
+                <div class="char_left first_char"><a id="t{topic_list.FIRST_CHAR}">&nbsp;</a>{topic_list.FIRST_CHAR}</div>
+				<div class="char_right top"><a href='#top'  title='Top'><i class='icon fa-chevron-circle-up fa-fw icon-gray' aria-hidden='true'></i><span class='sr-only'>Top</span></a></div>
 			</div>
 			<div style='clear: both;'></div>
 			<!-- ENDIF -->
@@ -59,8 +59,8 @@
 					<dl>
 						<dt></dt>
 						<dd style="text-align: left; width: 2%;">{topic_list.TOPIC_ICON_IMG}</dd>
-						<dd style="text-align: left; width: 35%;"><a class="forumtitle" href="{topic_list.TOPIC_LINK}">{topic_list.TOPIC_TITLE}</a></dd>
-						<dd style="text-align: left; width: 25%;"><a class="forumtitle" href="{topic_list.FORUM_LINK}">{topic_list.FORUM_NAME}</a></dd>
+						<dd style="text-align: left; width: 35%;"><a class="topiclist-title" href="{topic_list.TOPIC_LINK}">{topic_list.TOPIC_TITLE}</a></dd>
+						<dd style="text-align: left; width: 25%;"><a class="topiclist-title" href="{topic_list.FORUM_LINK}">{topic_list.FORUM_NAME}</a></dd>
 						<dd style="text-align: center; width: 12%;"><span>{topic_list.TOPIC_AUTHOR_FULL}<br>{topic_list.FIRST_POST_TIME}</span></dd>
 						<dd style="text-align: center; width: 6%;">{topic_list.TOPIC_REPLIES}</dd>
 						<dd style="text-align: center; width: 6%;">{topic_list.TOPIC_VIEWS}</dd>
@@ -73,10 +73,8 @@
 			</ul>
 			<!-- END topic_list -->
 		</div>
-    <div>            
-	<div style='clear: both;'></div>
-	<br /> 
+		<div style='clear: both;'></div>
+		<br /> 
 	</div>
-
 	<hr class="divider" />
 <!-- ENDIF -->
