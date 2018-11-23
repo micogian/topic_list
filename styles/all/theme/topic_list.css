@@ -1,4 +1,4 @@
-/* style mod_topic_list by Micogian
+/* style topic_list by Micogian
 ---------------------------------------- */
 .nav_alfa span a, .nav_alfa span a:link, .nav_alfa span a:visited, .nav_alfa span a:active {
     font-weight: normal;
@@ -44,19 +44,25 @@
    text-decoration: none;
 }
 .char_left{
-   font-size: 2em;
-   color: #000080;
-   margin: 1px;
-   text-align: left;
-   float: left;
-   text-decoration: none;
+	float: left;
+	font-size: 2em;
+	color: #000080;
+	margin: 1px;
+	text-align: left;
+	
+	text-decoration: none;
 }
-
+a.topiclist-title {
+    font-family: "Trebuchet MS", Helvetica, Arial, Sans-serif;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-decoration: none;
+}
 .char_right{
-   margin: 1px;
-   text-align: right;
-   float: right;
-   text-decoration: none;
+	float: right; 
+	margin: 1px;
+	text-align: right;	
+	text-decoration: none;
 }
 .first_char {
    font-size: 1.5em;
@@ -74,4 +80,7 @@
 }
 .online {
     background-image: none;
+}
+.action-bar{
+	display: none;
 }
