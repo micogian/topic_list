@@ -208,7 +208,7 @@ class listener implements EventSubscriberInterface
 				'S_FIRST_ROW'          	 	=> $first_row[$i],
 				'BG_ROW'           			=> $bg_row,
 				'FIRST_CHAR'           		=> $first_char[$i],
-				'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path.$topic_icon_img[$i]. "'>",
+				'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path.$topic_icon_img[$i]. "' alt=''>",
 				'TOPIC_TITLE'           	=> $topic_title[$i],
 				'TOPIC_LINK'            	=> append_sid("{$phpbb_root_path}viewtopic.$this->phpEx", 't='.$row1['topic_id']),
 				'FORUM_LINK'		 		=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
