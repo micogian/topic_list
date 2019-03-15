@@ -2,7 +2,7 @@
 /**
 *
 * Topic List extension for the phpBB Forum Software package.
-*
+* version 1.0.2
 * @copyright (c) 2018 Giovanni Dose (Micogian)
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
