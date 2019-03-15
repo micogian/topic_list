@@ -1,32 +1,113 @@
 <!-- IF TOPIC_LIST_DISPLAY -->
-	<h3>{TITLE_TOPIC_LIST}: {FORUM_LIST_COR}</h3>
-	<div class="navbar">
-		<div class="inner">       
-			<div id="tab_left">
-				<form name="form" method="post">
-					<input type="hidden" name=forum_id value="{FORUM_LIST_COR}">
-					<label>&nbsp;Periodo di ricerca &nbsp;</label>
-					<select name="days" onChange="this.form.submit()" >
-						<option value ="1" {TOPIC_TIME_1}>{TEXT_TIME_1}</option>
-						<option value ="7" {TOPIC_TIME_2}>{TEXT_TIME_2}</option>
-						<option value ="30" {TOPIC_TIME_3}>{TEXT_TIME_3}</option>
-						<option value ="60" {TOPIC_TIME_4}>{TEXT_TIME_4}</option>
-						<option value ="90" {TOPIC_TIME_5}>{TEXT_TIME_5}</option>
-						<option value ="120" {TOPIC_TIME_6}>{TEXT_TIME_6}</option>
-						<option value ="365" {TOPIC_TIME_7}>{TEXT_TIME_7}</option>						
-					</select>
-				</form>
-			</div>
-			<div id="tab_right">
-				<div class="nav_alfa">
-					<span>
-						<a href="#t@">@</a><a href="#t0">0-9</a><a href="#tA">A</a><a href="#tB">B</a><a href="#tC">C</a><a href="#tD">D</a><a href="#tE">E</a><a href="#tF">F</a><a href="#tG">G</a><a href="#tH">H</a><a href="#tI">I</a><a href="#tJ">J</a><a href="#tK">K</a><a href="#tL">L</a><a href="#tM">M</a><a href="#tN">N</a><a href="#tO">O</a><a href="#tP">P</a><a href="#tQ">Q</a><a href="#tR">R</a><a href="#tS">S</a><a href="#tT">T</a><a href="#tU">U</a><a href="#tV">V</a><a href="#tW">W</a><a href="#tX">X</a><a href="#tY">Y</a><a href="#tZ">Z</a>
-					</span>
-				</div>
-			</div>
-			<div style='clear: both;'></div>
+	<!-- IF MULTIPAGES -->
+	<div style="width: 50%;">
+		<div style="float: left;">
+			<form id="form" method="post">
+				<input type="hidden" name=forum_id value="{FORUM_LIST_COR}">
+				<label>&nbsp;Periodo di ricerca &nbsp;</label>
+				<select name="days" onChange="this.form.submit()" >
+					<option value ="1" {TOPIC_TIME_1}>{TEXT_TIME_1}</option>
+					<option value ="7" {TOPIC_TIME_2}>{TEXT_TIME_2}</option>
+					<option value ="30" {TOPIC_TIME_3}>{TEXT_TIME_3}</option>
+					<option value ="60" {TOPIC_TIME_4}>{TEXT_TIME_4}</option>
+					<option value ="90" {TOPIC_TIME_5}>{TEXT_TIME_5}</option>
+					<option value ="120" {TOPIC_TIME_6}>{TEXT_TIME_6}</option>
+					<option value ="365" {TOPIC_TIME_7}>{TEXT_TIME_7}</option>						
+				</select>
+			</form>
 		</div>
-    </div>
+		<div style="float: left; margin: 0 0 5px 10px;">
+			<form method="post" id="forum-search" action="{BASE_URL}">
+				<input class="inputbox search tiny" type="search" name="string" id="search_keywords" size="25" placeholder="{L_SEARCH_FORUM} (min.4 carat.)" />
+					<!--<button class="button button-search" type="submit" title="{L_SEARCH}">-->
+					<button class="button" type="submit" title="{L_SEARCH}">
+						<i class="icon fa-search fa-fw" aria-hidden="true"></i><span class="sr-only">{L_SEARCH}</span>
+					</button>
+			</form>
+		</div>
+		<div style="float: left; margin: 0 0 5px 10px;">
+			<a class="button active" href="{BASE_URL}" role="button">RESET</a>
+		</div>
+		
+	</div>
+	<div class="pagination">		
+		<span>&bull; 	Totale argomenti selezionati: {FIRST_TOPIC}/{LAST_TOPIC} di {TOTAL_TOPICS}</span>
+		<ul>
+			<!-- IF BASE_URL and TOTAL_PAGES > 6 -->
+			<li class="dropdown-container dropdown-button-control dropdown-page-jump page-jump">
+				<a class="button button-icon-only dropdown-trigger" href="#" title="{L_JUMP_TO_PAGE_CLICK}" role="button"><i class="icon fa-level-down fa-rotate-270" aria-hidden="true"></i><span class="sr-only">{PAGE_NUMBER}</span></a>
+				<div class="dropdown">
+					<div class="pointer"><div class="pointer-inner"></div></div>
+					<ul class="dropdown-contents">
+						<li>{L_JUMP_TO_PAGE}{L_COLON}</li>
+						<li class="page-jump-form">
+							<input type="number" name="page-number" min="1" max="999999" title="{L_JUMP_PAGE}" class="inputbox tiny" data-per-page="{PER_PAGE}" data-base-url="{BASE_URL|e('html_attr')}" data-start-name="{START_NAME}" /><input class="button2" value="{L_GO}" type="button" />
+						</li>
+					</ul>
+				</div>
+			</li>
+		<!-- ENDIF -->
+		<!-- BEGIN page_topiclist -->
+				<!-- IF page_topiclist.S_IS_PREV -->
+					<li class="arrow previous"><a class="button button-icon-only" href="{page_topiclist.PAGE_URL}" rel="prev" role="button"><i class="icon fa-chevron-{S_CONTENT_FLOW_BEGIN} fa-fw" aria-hidden="true"></i><span class="sr-only">{L_PREVIOUS}</span></a></li>
+				<!-- ELSEIF page_topiclist.S_IS_CURRENT -->
+				<li class="active"><span>{page_topiclist.PAGE_NUMBER}</span></li>
+				<!-- ELSEIF page_topiclist.S_IS_ELLIPSIS -->
+				<li class="ellipsis" role="separator"><span>{L_ELLIPSIS}</span></li>				
+				<!-- ELSEIF page_topiclist.S_IS_NEXT -->
+					<li class="arrow next"><a class="button button-icon-only" href="{page_topiclist.PAGE_URL}" rel="next" role="button"><i class="icon fa-chevron-{S_CONTENT_FLOW_END} fa-fw" aria-hidden="true"></i><span class="sr-only">{L_NEXT}</span></a></li>			
+				<!-- ELSE -->
+					<li><a class="button" href="{page_topiclist.PAGE_URL}" role="button">{page_topiclist.PAGE_NUMBER}</a></li>
+				<!-- ENDIF -->
+		<!-- END page_topiclist -->
+		</ul>		
+	</div>
+	<div style='clear: both;'></div>
+	<!-- ELSE -->
+	<div id="tab_right">
+		<div class="nav_alfa">
+			<span>
+				<a href="#t@">@</a><a href="#t0">0-9</a><a href="#tA">A</a><a href="#tB">B</a><a href="#tC">C</a><a href="#tD">D</a><a href="#tE">E</a><a href="#tF">F</a><a href="#tG">G</a><a href="#tH">H</a><a href="#tI">I</a><a href="#tJ">J</a><a href="#tK">K</a><a href="#tL">L</a><a href="#tM">M</a><a href="#tN">N</a><a href="#tO">O</a><a href="#tP">P</a><a href="#tQ">Q</a><a href="#tR">R</a><a href="#tS">S</a><a href="#tT">T</a><a href="#tU">U</a><a href="#tV">V</a><a href="#tW">W</a><a href="#tX">X</a><a href="#tY">Y</a><a href="#tZ">Z</a>
+			</span>
+			<br />
+		</div>
+	</div>
+	<div style='clear: both;'></div>
+	<br />
+	<div style="width: 50%;">
+		<div style="float: left;">
+			<form name="form" method="post">
+				<input type="hidden" name=forum_id value="{FORUM_LIST_COR}">
+				<label>&nbsp;Periodo di ricerca &nbsp;</label>
+				<select name="days" onChange="this.form.submit()" >
+					<option value ="1" {TOPIC_TIME_1}>{TEXT_TIME_1}</option>
+					<option value ="7" {TOPIC_TIME_2}>{TEXT_TIME_2}</option>
+					<option value ="30" {TOPIC_TIME_3}>{TEXT_TIME_3}</option>
+					<option value ="60" {TOPIC_TIME_4}>{TEXT_TIME_4}</option>
+					<option value ="90" {TOPIC_TIME_5}>{TEXT_TIME_5}</option>
+					<option value ="120" {TOPIC_TIME_6}>{TEXT_TIME_6}</option>
+					<option value ="365" {TOPIC_TIME_7}>{TEXT_TIME_7}</option>						
+				</select>
+			</form>
+		</div>
+		<div style="float: left; margin: 0 0 5px 10px;">
+			<form method="post" id="forum-search" action="{BASE_URL}">
+				<input class="inputbox search tiny" type="search" name="string" id="search_keywords" size="25" placeholder="{L_SEARCH_FORUM} (min.4 carat.)" />
+					<!--<button class="button button-search" type="submit" title="{L_SEARCH}">-->
+					<button class="button" type="submit" title="{L_SEARCH}">
+						<i class="icon fa-search fa-fw" aria-hidden="true"></i><span class="sr-only">{L_SEARCH}</span>
+					</button>
+			</form>
+		</div>
+		<div style="float: left; margin: 0 0 5px 10px;">
+			<a class="button active" href="{BASE_URL}" role="button">RESET</a>
+		</div>
+	</div>
+	<div style="float: right; margin-top: 10px;">	
+		<span>&bull; 	Totale argomenti selezionati: {TOTAL_TOPICS}</span>		
+	</div>
+	<div style='clear: both;'></div>
+	<!-- ENDIF -->
 	<div class="forabg">
 		<div class="inner">
             <ul class="topiclist">
@@ -58,8 +139,9 @@
 				<li class="bg_row">
 					<dl>
 						<dt></dt>
+						<dd style="text-align: left; width: 2%;">{topic_list.TOPIC_NUMBER}</dd>
 						<dd style="text-align: left; width: 2%;">{topic_list.TOPIC_ICON_IMG}</dd>
-						<dd style="text-align: left; width: 35%;"><a class="topiclist-title" href="{topic_list.TOPIC_LINK}">{topic_list.TOPIC_TITLE}</a></dd>
+						<dd style="text-align: left; width: 33%;"><a class="topiclist-title" href="{topic_list.TOPIC_LINK}">{topic_list.TOPIC_TITLE}</a></dd>
 						<dd style="text-align: left; width: 25%;"><a class="topiclist-title" href="{topic_list.FORUM_LINK}">{topic_list.FORUM_NAME}</a></dd>
 						<dd style="text-align: center; width: 12%;"><span>{topic_list.TOPIC_AUTHOR_FULL}<br>{topic_list.FIRST_POST_TIME}</span></dd>
 						<dd style="text-align: center; width: 6%;">{topic_list.TOPIC_REPLIES}</dd>
