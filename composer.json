@@ -2,15 +2,15 @@
     "name": "micogian/topic_list",
     "type": "phpbb-extension",
     "description": "Inserendo in un topic il bbcode [ttlist] visualizza la lista dei topics della cartella corrente o delle cartelle indicate.",
-    "homepage": "http://www.floraitaliae.actaplantarum.org/",
-    "version": "1.0.1",
-    "time": "2018-10-13",
+    "homepage": "https://www.floraitaliae.actaplantarum.org/",
+    "version": "1.0.2",
+    "time": "2019-03-15",
     "license": "GPL-2.0",
     "authors": [
         {
             "name": "Micogian",
             "email": "giannidose@tin.it",
-            "homepage": "http://www.floraitaliae.actaplantarum.org/",
+            "homepage": "https://www.floraitaliae.actaplantarum.org/",
             "role": "Developer"
         },
 		{
