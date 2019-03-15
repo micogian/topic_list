@@ -58,6 +58,7 @@ class listener implements EventSubscriberInterface
 		$message	=$rowmessage['MESSAGE'];
 		$post_id	=$rowmessage['POST_ID'];
 		$multiforum	= false;
+		$per_page	= 50 ;   // Records per pagina
 		
 		$icons = $this->cache->obtain_icons();
 
@@ -301,7 +302,7 @@ class listener implements EventSubscriberInterface
 			
 			//####################################################
 			$total_topics	= $row_tot[total];    				// totale dei topics selezionati
-			$per_page		= 10 ;               				// records per pagina			
+			//$per_page		= 10 ;               				// records per pagina			
 			$total_pages 	= ceil($total_topics / $per_page);  // totale pagine
 			$end_topic		= $start + $per_page ;      		// ultimo record della lista
 			if( $start == '' or $start == 0)
