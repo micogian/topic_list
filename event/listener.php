@@ -58,7 +58,7 @@ class listener implements EventSubscriberInterface
 		$message	=$rowmessage['MESSAGE'];
 		$post_id	=$rowmessage['POST_ID'];
 		$multiforum	= false;
-		$per_page	= 50 ;   // Records per pagina
+		$per_page	= 100 ;   // Records per pagina
 		
 		$icons = $this->cache->obtain_icons();
 
