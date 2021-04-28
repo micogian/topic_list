@@ -301,7 +301,7 @@ class listener implements EventSubscriberInterface
 			$row_tot = $this->db->sql_fetchrow($tot);			
 			
 			//####################################################
-			$total_topics	= $row_tot[total];    				// totale dei topics selezionati
+			$total_topics	= $row_tot['total'];    				// totale dei topics selezionati
 			//$per_page		= 10 ;               				// records per pagina			
 			$total_pages 	= ceil($total_topics / $per_page);  // totale pagine
 			$end_topic		= $start + $per_page ;      		// ultimo record della lista
@@ -624,7 +624,7 @@ class listener implements EventSubscriberInterface
 				$reply = "SELECT COUNT(post_id) AS tot_replies FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
 				$result2 = $this->db->sql_query($reply);
 				$row2 = $this->db->sql_fetchrow($result2);
-				$topic_replies[$i]			= $row2[tot_replies] - 1;
+				$topic_replies[$i]			= $row2['tot_replies'] - 1;
 				
 				$this->template->assign_block_vars('topic_list', array(
 				'TOPIC_NUMBER'				=> $topic_number[$i],
