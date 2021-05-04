@@ -112,41 +112,45 @@
 		<div class="inner">
             <ul class="topiclist">
 				<li class="header">
-                    <dl>
-						<dt style="width: 3%;"></dt>
-						<dd style="text-align: left; width: 37%;">&nbsp;&nbsp;{L_TOPIC_TITLE}</dd>
-						<dd style="text-align: left; width: 25%;">&nbsp;Nome del Forum</dd>
-						<dd style="text-align: center; width:12%;">&nbsp;Autore - Data</dd>
-						<dd style="text-align: center; width:6%;">&nbsp;{L_REPLIES}</dd> 
-						<dd style="text-align: center; width:6%;">&nbsp;{L_VIEWS}</dd>  						
-						<dd style="text-align: center; width: 12%;">&nbsp;Ultimo messaggio</dd>
+                    <dl class="row-item">
+						<dt><div class="list-inner">&nbsp;&nbsp;{L_TOPIC_TITLE}</div></dt>
+						<dd class="posts">{L_REPLIES}</dd> 
+						<dd class="views">{L_VIEWS}</dd>  						
+						<dd class="lastpost"><span>Ultimo messaggio</span></dd>
 					</dl>
 				</li>
             </ul>
-        </div>
-	</div>
-	<div class="navbar">
-        <div class="inner">
+			<div class='clear'></div>
+			<br>
 			<!-- BEGIN topic_list -->
 			<!-- IF topic_list.S_FIRST_ROW == 1 -->
-			<div>	
-                <div class="char_left first_char"><a id="t{topic_list.FIRST_CHAR}">&nbsp;</a>{topic_list.FIRST_CHAR}</div>
-				<div class="char_right top"><a href='#top'  title='Top'><i class='icon fa-chevron-circle-up fa-fw icon-gray' aria-hidden='true'></i><span class='sr-only'>Top</span></a></div>
-			</div>
-			<div style='clear: both;'></div>
-			<!-- ENDIF -->
-			<ul class="topiclist forums">     
+			<ul class="topiclist topics" style="background-color: #FFFFFF;">     
 				<li class="bg_row">
 					<dl>
-						<dt></dt>
-						<dd style="text-align: left; width: 2%;">{topic_list.TOPIC_NUMBER}</dd>
-						<dd style="text-align: left; width: 2%;">{topic_list.TOPIC_ICON_IMG}</dd>
-						<dd style="text-align: left; width: 33%;"><a class="topiclist-title" href="{topic_list.TOPIC_LINK}">{topic_list.TOPIC_TITLE}</a></dd>
-						<dd style="text-align: left; width: 25%;"><a class="topiclist-title" href="{topic_list.FORUM_LINK}">{topic_list.FORUM_NAME}</a></dd>
-						<dd style="text-align: center; width: 12%;"><span>{topic_list.TOPIC_AUTHOR_FULL}<br>{topic_list.FIRST_POST_TIME}</span></dd>
-						<dd style="text-align: center; width: 6%;">{topic_list.TOPIC_REPLIES}</dd>
-						<dd style="text-align: center; width: 6%;">{topic_list.TOPIC_VIEWS}</dd>
-						<dd style="text-align: center; width: 12%;">{topic_list.LAST_POST_AUTHOR_FULL} <a href='{topic_list.LAST_POST_LINK}' title='Apri ultimo messaggio' >
+						<dt>
+							<div>
+								<div class="char_left first_char"><a id="t{topic_list.FIRST_CHAR}">&nbsp;</a>{topic_list.FIRST_CHAR}</div>
+								<div class="char_right top"><a href='#top'  title='Top'><i class='icon fa-chevron-circle-up fa-fw icon-gray' aria-hidden='true'></i><span class='sr-only'>Top</span></a></div>
+							</div>
+						</dt>
+					</dl>
+				</li>
+			</ul>
+			<div class='clear'></div>
+			<!-- ENDIF -->
+			<ul class="topiclist topics">     
+				<li class="bg_row">
+					<dl>
+						<dt>
+							<div class="list-inner">
+								{topic_list.TOPIC_NUMBER}&nbsp;&nbsp;&nbsp;
+								<a class="topiclist-title" href="{topic_list.TOPIC_LINK}">{topic_list.TOPIC_TITLE}</a><br>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;da <span>{topic_list.TOPIC_AUTHOR_FULL}&nbsp;&nbsp;{topic_list.FIRST_POST_TIME}</span>
+							</div>													
+						</dt>
+						<dd class="posts">{topic_list.TOPIC_REPLIES}</dd>
+						<dd class="views">{topic_list.TOPIC_VIEWS}</dd>
+						<dd class="lastpost">{topic_list.LAST_POST_AUTHOR_FULL} <a href='{topic_list.LAST_POST_LINK}' title='Apri ultimo messaggio' >
 							<i class='icon fa-external-link-square fa-fw icon-lightgray icon-md' aria-hidden='true'></i><span class='sr-only'>Vedi ultimo messaggio</span>	</a>					
 							<br>{topic_list.LAST_POST_TIME}
 						</dd>
@@ -155,8 +159,9 @@
 			</ul>
 			<!-- END topic_list -->
 		</div>
-		<div style='clear: both;'></div>
+		<div class='clear'></div>
 		<br /> 
 	</div>
+
 	<hr class="divider" />
 <!-- ENDIF -->
