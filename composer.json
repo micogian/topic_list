@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "Inserendo in un topic il bbcode [ttlist] visualizza la lista dei topics del Forum corrente o dei Forums indicati.",
     "homepage": "https://www.floraitaliae.actaplantarum.org/",
-    "version": "1.0.4",
-    "time": "2021-05-04",
+    "version": "1.0.5",
+    "time": "2021-12-04",
     "license": "GPL-2.0",
     "authors": [
         {
