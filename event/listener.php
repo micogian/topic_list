@@ -238,7 +238,7 @@ class listener implements EventSubscriberInterface
 					$topic_link[$i]				= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", 't='.$row1['topic_id']);
 					$forum_link[$i]				= append_sid("{$this->root_path}viewforum.{$this->phpEx}", 'f='.$row1['forum_id']);
 					$forum_name_cor[$i]			= $row1['forum_name_cor'];
-					$topic_replies[$i]			= $row1['topic_replies'];
+					//$topic_replies[$i]			= $row1['topic_replies'];
 					$topic_views[$i]			= $row1['topic_views'];
 					$topic_author[$i]			= $row1['topic_first_poster_name'];
 					$topic_author_full[$i]		= get_username_string('full', $row1['topic_poster'], $row1['topic_first_poster_name'], $row1['topic_first_poster_colour']);
@@ -255,19 +255,19 @@ class listener implements EventSubscriberInterface
 					$this->template->assign_block_vars('topic_list', array(
 					'TOPIC_NUMBER'				=> $topic_number[$i],
 					'S_FIRST_ROW'          	 	=> $first_row[$i],
-					'BG_ROW'           			=> $bg_row,
+					'BG_ROW'           		=> $bg_row,
 					'FIRST_CHAR'           		=> $first_char[$i],
 					'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path.$topic_icon_img[$i]. "' alt=''>",
 					'TOPIC_TITLE'           	=> $topic_title[$i],
 					'TOPIC_LINK'            	=> append_sid("{$phpbb_root_path}viewtopic.$this->phpEx", 't='.$row1['topic_id']),
-					'FORUM_LINK'		 		=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
+					'FORUM_LINK'		 	=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
 					'FORUM_NAME'        		=> $forum_name_cor[$i],
 					'TOPIC_REPLIES'         	=> $topic_replies[$i],
-					'TOPIC_VIEWS'         	    => $topic_views[$i],
+					'TOPIC_VIEWS'         	        => $topic_views[$i],
 					'TOPIC_AUTHOR'          	=> $topic_author[$i],
 					'TOPIC_AUTHOR_FULL'     	=> $topic_author_full[$i],
 					'FIRST_POST_TIME'       	=> $first_post_time[$i],
-					'LAST_POST_TIME'			=> $last_post_time[$i], 
+					'LAST_POST_TIME'		=> $last_post_time[$i], 
 					'LAST_POST_AUTHOR_FULL' 	=> $last_post_author_full[$i],
 					'LAST_POST_LINK'			=> $last_post_link[$i], 
 					));
