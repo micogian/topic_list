@@ -250,7 +250,7 @@ class listener implements EventSubscriberInterface
 					$reply = "SELECT COUNT(post_id) AS tot_replies FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
 					$result2 = $this->db->sql_query($reply);
 					$row2 = $this->db->sql_fetchrow($result2);
-					$topic_replies[$i]			= $row2[tot_replies] - 1;
+					$topic_replies[$i]			= $row2['tot_replies'] - 1;
 
 					$this->template->assign_block_vars('topic_list', array(
 					'TOPIC_NUMBER'				=> $topic_number[$i],
