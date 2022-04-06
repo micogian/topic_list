@@ -31,38 +31,9 @@
 		
 	</div>
 	<div class="pagination">		
-		<span>&bull; 	Totale argomenti selezionati: {FIRST_TOPIC}/{LAST_TOPIC} di {TOTAL_TOPICS}</span>
-		<ul>
-			<!-- IF BASE_URL and TOTAL_PAGES > 6 -->
-			<li class="dropdown-container dropdown-button-control dropdown-page-jump page-jump">
-				<a class="button button-icon-only dropdown-trigger" href="#" title="{L_JUMP_TO_PAGE_CLICK}" role="button"><i class="icon fa-level-down fa-rotate-270" aria-hidden="true"></i><span class="sr-only">{PAGE_NUMBER}</span></a>
-				<div class="dropdown">
-					<div class="pointer"><div class="pointer-inner"></div></div>
-					<ul class="dropdown-contents">
-						<li>{L_JUMP_TO_PAGE}{L_COLON}</li>
-						<li class="page-jump-form">
-							<input type="number" name="page-number" min="1" max="999999" title="{L_JUMP_PAGE}" class="inputbox tiny" data-per-page="{PER_PAGE}" data-base-url="{BASE_URL|e('html_attr')}" data-start-name="{START_NAME}" /><input class="button2" value="{L_GO}" type="button" />
-						</li>
-					</ul>
-				</div>
-			</li>
-		<!-- ENDIF -->
-		<!-- BEGIN page_topiclist -->
-				<!-- IF page_topiclist.S_IS_PREV -->
-					<li class="arrow previous"><a class="button button-icon-only" href="{page_topiclist.PAGE_URL}" rel="prev" role="button"><i class="icon fa-chevron-{S_CONTENT_FLOW_BEGIN} fa-fw" aria-hidden="true"></i><span class="sr-only">{L_PREVIOUS}</span></a></li>
-				<!-- ELSEIF page_topiclist.S_IS_CURRENT -->
-				<li class="active"><span>{page_topiclist.PAGE_NUMBER}</span></li>
-				<!-- ELSEIF page_topiclist.S_IS_ELLIPSIS -->
-				<li class="ellipsis" role="separator"><span>{L_ELLIPSIS}</span></li>				
-				<!-- ELSEIF page_topiclist.S_IS_NEXT -->
-					<li class="arrow next"><a class="button button-icon-only" href="{page_topiclist.PAGE_URL}" rel="next" role="button"><i class="icon fa-chevron-{S_CONTENT_FLOW_END} fa-fw" aria-hidden="true"></i><span class="sr-only">{L_NEXT}</span></a></li>			
-				<!-- ELSE -->
-					<li><a class="button" href="{page_topiclist.PAGE_URL}" role="button">{page_topiclist.PAGE_NUMBER}</a></li>
-				<!-- ENDIF -->
-		<!-- END page_topiclist -->
-		</ul>		
+		<span>&bull; 	Totale argomenti selezionati: {FIRST_TOPIC}/{LAST_TOPIC} di {TOTAL_TOPICS}</span>		
 	</div>
-	<div style='clear: both;'></div>
+	<div class='clear'></div>
 	<!-- ELSE -->
 	<div id="tab_right">
 		<div class="nav_alfa">
@@ -72,7 +43,7 @@
 			<br />
 		</div>
 	</div>
-	<div style='clear: both;'></div>
+	<div class='clear'></div>
 	<br />
 	<div style="width: 50%;">
 		<div style="float: left;">
@@ -106,7 +77,7 @@
 	<div style="float: right; margin-top: 10px;">	
 		<span>&bull; 	Totale argomenti selezionati: {TOTAL_TOPICS}</span>		
 	</div>
-	<div style='clear: both;'></div>
+	<div class='clear'></div>
 	<!-- ENDIF -->
 	<div class="forabg">
 		<div class="inner">
