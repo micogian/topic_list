@@ -28,4 +28,5 @@ $lang = array_merge($lang, array(
 	'TEXT_TIME_5'			=> '90 giorni',
 	'TEXT_TIME_6'			=> '120 giorni',
 	'TEXT_TIME_7'			=> '365 giorni',
+	'SEARCH_USER'			=> 'user_id',
 ));
