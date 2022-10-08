@@ -2,7 +2,7 @@
 /**
 *
 * Topic List extension for the phpBB Forum Software package.
-* version 1.0.6 - 06/04/2022
+* version 1.0.7 - 08/10/2022
 * @copyright (c) 2018 Giovanni Dose (Micogian)
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
@@ -72,7 +72,8 @@ class listener implements EventSubscriberInterface
 			$topic_cor		= request_var('t', '');
 			$start			= request_var('start', '0');
 			$cerca			= request_var('string', '%');
-			$base_url 	    = $this->root_path . "viewtopic.php" . "?f=" . $forum_cor . "&amp;t=" . $topic_cor;		
+			$user_cor		= request_var('u', '0');
+			$base_url 	        = $this->root_path . "viewtopic.php" . "?f=" . $forum_cor . "&amp;t=" . $topic_cor;		
 			//echo "cerca= " . $cerca . "<br>";
 			if( $start == '')
 			{
@@ -179,7 +180,7 @@ class listener implements EventSubscriberInterface
 				}else{
 					$where_list = $where_list . "," . $forum_cor ;
 				}
-			}			
+			}		
 		if(isset($cerca))
 		{	
 				$stringa_cor = "%".$cerca."%";
@@ -280,6 +281,107 @@ class listener implements EventSubscriberInterface
 				'TOTAL_TOPICS'		=> $total_topics,
 				));
 			$cerca	= '';
+		}elseif ($user_cor > 0)
+		{
+			// #############   RICERCA PER USER_ID   ##################
+				//echo "User_cor " . $user_cor . " <br>";
+				//QUERY DI SELEZIONE DEI DATI 
+				$sql1 = "SELECT 
+				t.topic_id, t.icon_id, t.topic_title, t.topic_time, 
+				t.topic_moved_id, t.topic_first_poster_name, t.topic_poster, t.topic_views, t.topic_first_poster_colour, t.topic_last_post_id,
+				t.topic_last_poster_id, t.topic_last_poster_name, t.topic_last_poster_colour, t.topic_last_post_time,
+				f.parent_id, f.forum_id, f.forum_name AS forum_name_cor,
+				UCASE(LEFT(t.topic_title, 1)) AS first_char
+				FROM ". TOPICS_TABLE." t,". FORUMS_TABLE. " f
+				WHERE t.forum_id IN($where_list)
+				AND t.topic_poster = '".$user_cor."'
+				AND f.forum_id = t.forum_id
+				AND t.topic_moved_id = 0
+				AND t.topic_last_post_time  > $data_post
+				ORDER BY UCASE(t.topic_title)";
+				$this->db->sql_query($sql1);
+				$result1 = $this->db->sql_query($sql1);
+				$current_char = '';
+				$bg_row = "bg2";
+				$i = 0;
+				$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+				while ($row1 = $this->db->sql_fetchrow($result1))
+				{
+					if (strchr("0123456789", $row1['first_char']))
+					{
+						$first_char[$i] = '0';
+					}else if (strchr($string, $row1['first_char']) ){
+						$first_char[$i] = $row1['first_char'];
+					}else{
+						$first_char[$i] 	= "@";
+					}
+				
+					if ($first_char[$i] != $current_char) 
+					{
+						$first_row[$i]			= true ;
+					}else{
+						$first_row[$i]			= false ;
+					}
+					$topic_number[$i]			=  $start + $i +1;
+					$topic_icon_img[$i]			= (!empty($icons[$row1['icon_id']])) ? "images/icons/".$icons[$row1['icon_id']]['img'] : 'ext/micogian/topic_list/images/empty.gif';
+					$topic_id[$i]				= $row1['topic_id'];
+					$forum_id[$i]				= $row1['forum_id'];
+					$icon_id[$i]				= $row1['icon_id'];
+					$topic_title[$i]			= $row1['topic_title'];
+					$topic_link[$i]				= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", 't='.$row1['topic_id']);
+					$forum_link[$i]				= append_sid("{$this->root_path}viewforum.{$this->phpEx}", 'f='.$row1['forum_id']);
+					$forum_name_cor[$i]			= $row1['forum_name_cor'];
+					$topic_replies[$i]			= $row1['topic_replies'];
+					$topic_views[$i]			= $row1['topic_views'];
+					$topic_author[$i]			= $row1['topic_first_poster_name'];
+					$topic_author_full[$i]		= get_username_string('full', $row1['topic_poster'], $row1['topic_first_poster_name'], $row1['topic_first_poster_colour']);
+					$first_post_time[$i]		= $this->user->format_date($row1['topic_time']); //date("d.m.Y",$row['topic_time']);
+					$last_post_time[$i]			= $this->user->format_date($row1['topic_last_post_time']);
+					$last_post_author_full[$i]	= get_username_string('full', $row1['topic_last_poster_id'], $row1['topic_last_poster_name'], $row1['topic_last_poster_colour']);
+					$last_post_link[$i]			= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", "f=" . $row1['forum_id'] . "&amp;p=" . $row1['topic_last_post_id'] . "#p" . $row1['topic_last_post_id']);
+				
+					$reply = "SELECT COUNT(post_id) AS tot_replies FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
+					$result2 = $this->db->sql_query($reply);
+					$row2 = $this->db->sql_fetchrow($result2);
+					$topic_replies[$i]			= $row2['tot_replies'] - 1;
+                    //echo "TITOLO: " . $topic_title[$i] . "<br>";
+
+					$this->template->assign_block_vars('topic_list', array(
+					'TOPIC_NUMBER'				=> $topic_number[$i],
+					'S_FIRST_ROW'          	 	=> $first_row[$i],
+					'BG_ROW'           			=> $bg_row,
+					'FIRST_CHAR'           		=> $first_char[$i],
+					'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path.$topic_icon_img[$i]. "' alt=''>",
+					'TOPIC_TITLE'           	=> $topic_title[$i],
+					'TOPIC_LINK'            	=> append_sid("{$phpbb_root_path}viewtopic.$this->phpEx", 't='.$row1['topic_id']),
+					'FORUM_LINK'		 		=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
+					'FORUM_NAME'        		=> $forum_name_cor[$i],
+					'TOPIC_REPLIES'         	=> $topic_replies[$i],
+					'TOPIC_VIEWS'         	    => $topic_views[$i],
+					'TOPIC_AUTHOR'          	=> $topic_author[$i],
+					'TOPIC_AUTHOR_FULL'     	=> $topic_author_full[$i],
+					'FIRST_POST_TIME'       	=> $first_post_time[$i],
+					'LAST_POST_TIME'			=> $last_post_time[$i], 
+					'LAST_POST_AUTHOR_FULL' 	=> $last_post_author_full[$i],
+					'LAST_POST_LINK'			=> $last_post_link[$i], 
+					));
+
+					$current_char	= $first_char[$i] ;
+					++$i;
+				}
+				$total_topics	= $i;    				// totale dei topics selezionati
+				
+				$this->template->assign_vars(array(
+				'FORUM_LIST_COR' 	=> $where_list,
+				'TOTAL_TOPICS'		=> $total_topics,
+				'FIRST_TOPIC'		=> $start + 1,
+				'LAST_TOPIC'		=> $end_topic,
+				'TOTAL_PAGES' 		=> $total_pages,
+				'PAGE_COR' 			=> $page_cor,
+				'START' 			=> $start,
+				'PER_PAGE'			=> $per_page,
+				'MULTIPAGES'		=> $multipages,
+				));			
 		}
 		else
 		{
