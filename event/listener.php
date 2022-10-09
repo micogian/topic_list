@@ -2,7 +2,7 @@
 /**
 *
 * Topic List extension for the phpBB Forum Software package.
-* version 1.0.7 - 08/10/2022
+* version 1.0.6 - 06/04/2022
 * @copyright (c) 2018 Giovanni Dose (Micogian)
 * @license GNU General Public License, version 2 (GPL-2.0)
 *
@@ -58,12 +58,12 @@ class listener implements EventSubscriberInterface
 		$message	=$rowmessage['MESSAGE'];
 		$post_id	=$rowmessage['POST_ID'];
 		$multiforum	= false;
+		$per_page	= 100 ;   // Records per pagina
 		
 		$icons = $this->cache->obtain_icons();
 
 		if(strpos($message,"ttlist]"))
 		{
-			//echo "Message: " . $message . "<br />";
 			// VARIABILI INIZIALI
 			$time_cor		= request_var('days', 1);  // periodo della ricerca, per default TUTTO il periodo.
 			$page_cor		= request_var('page', '');  // pagina di default della lista
@@ -71,10 +71,10 @@ class listener implements EventSubscriberInterface
 			$forum_cor		= request_var('f', '');
 			$topic_cor		= request_var('t', '');
 			$start			= request_var('start', '0');
-			$cerca			= request_var('string', '0');
-			$user_cor		= request_var('u', '0');
-			$base_url 	= $this->root_path . "viewtopic.php" . "?f=" . $forum_cor . "&amp;t=" . $topic_cor;		
-			//echo "cerca= " . $cerca . "<br>";
+			$cerca			= request_var('string', '');
+			$user_cor       = request_var('u', '0');
+			$base_url 	    = $this->root_path . "viewtopic.php" . "?f=" . $forum_cor . "&amp;t=" . $topic_cor;		
+			//echo "1 - user_cor= " . $user_cor . "<br>";
 			if( $start == '')
 			{
 				$start	= 0;
@@ -138,10 +138,8 @@ class listener implements EventSubscriberInterface
 			// LISTA DEI FORUM DA ELABORARE
 			preg_match_all("#\[ttlist\](.*?)\[/ttlist\]#", $message, $forum_list);
 			$lista_tmp	= $forum_list[1][0] ;
-			
 			if(!$lista_tmp)
 			{
-				// LISTA MONOFORUM
 				// FORUM NON INSERITO NEL BBCODE E PERTANTO ASSOCIATO AL FORUM_ID DEL TOPIC CORRENTE
 				$forum_query=$this->db->sql_query("SELECT forum_id
 				FROM " . POSTS_TABLE . "
@@ -149,7 +147,7 @@ class listener implements EventSubscriberInterface
 				$forum_id_array=$this->db->sql_fetchrow($forum_query);
 				$lista_tmp	= $forum_id_array['forum_id'];
 			}else{
-				// LISTA MULTIFORUM
+				// LISTA MONOFORUM
 				if (strpos($lista_tmp, ","))
 				{
 					$multiforum	= true ; 
@@ -157,7 +155,7 @@ class listener implements EventSubscriberInterface
 				}
 			}
 			
-			//echo "Lista_tmp: " . $lista_tmp . "<br>";
+
 			// CONTROLLO DEI PERMESSI DI LETTURA DEI FORUM 
 			$forums_id = array();
 			$sql = "SELECT forum_id, forum_type, forum_name FROM " . FORUMS_TABLE . " WHERE forum_id IN($lista_tmp) || parent_id IN($lista_tmp)";
@@ -182,18 +180,9 @@ class listener implements EventSubscriberInterface
 				}else{
 					$where_list = $where_list . "," . $forum_cor ;
 				}
-			}
-		//echo "Forum da elaborare: " . $where_list ."<br>";
+			}			
 		if($cerca)
 		{	
-			// #############   RICERCA PER STRINGA   ##################
-			if( strlen($cerca) < 4)
-			{
-				$msg = "ATTENZIONE - inserire almeno 4 caratteri.";
-				echo "<script language='javascript'>
-				alert('$msg');
-				</script>";
-			}
 				$stringa_cor = "%".$cerca."%";
 				//echo "Stringa " . $stringa_cor . " <br>";
 				//QUERY DI SELEZIONE DEI DATI 
@@ -242,7 +231,7 @@ class listener implements EventSubscriberInterface
 					$topic_link[$i]				= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", 't='.$row1['topic_id']);
 					$forum_link[$i]				= append_sid("{$this->root_path}viewforum.{$this->phpEx}", 'f='.$row1['forum_id']);
 					$forum_name_cor[$i]			= $row1['forum_name_cor'];
-					$topic_replies[$i]			= $row1['topic_replies'];
+					//$topic_replies[$i]			= $row1['topic_replies'];
 					$topic_views[$i]			= $row1['topic_views'];
 					$topic_author[$i]			= $row1['topic_first_poster_name'];
 					$topic_author_full[$i]		= get_username_string('full', $row1['topic_poster'], $row1['topic_first_poster_name'], $row1['topic_first_poster_colour']);
@@ -250,29 +239,34 @@ class listener implements EventSubscriberInterface
 					$last_post_time[$i]			= $this->user->format_date($row1['topic_last_post_time']);
 					$last_post_author_full[$i]	= get_username_string('full', $row1['topic_last_poster_id'], $row1['topic_last_poster_name'], $row1['topic_last_poster_colour']);
 					$last_post_link[$i]			= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", "f=" . $row1['forum_id'] . "&amp;p=" . $row1['topic_last_post_id'] . "#p" . $row1['topic_last_post_id']);
-				
-					$reply = "SELECT COUNT(post_id) AS tot_replies FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
-					$result2 = $this->db->sql_query($reply);
-					$row2 = $this->db->sql_fetchrow($result2);
-					$topic_replies[$i]			= $row2['tot_replies'] - 1;
-//echo "TITOLO: " . $topic_title[$i] . "<br>";
+				    $phpbb_root_path            = $this->root_path;
 
+					$reply = "SELECT post_id FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
+				    $result2 = $this->db->sql_query($reply);
+				    $rep= 0;
+				    while($row2 = $this->db->sql_fetchrow($result2))
+				    {
+					  ++$rep;
+				    }
+				    $topic_replies[$i]			= $rep;
+					$phpbb_root_path            = $this->root_path;
+					
 					$this->template->assign_block_vars('topic_list', array(
 					'TOPIC_NUMBER'				=> $topic_number[$i],
 					'S_FIRST_ROW'          	 	=> $first_row[$i],
-					'BG_ROW'           			=> $bg_row,
+					'BG_ROW'           		    => $bg_row,
 					'FIRST_CHAR'           		=> $first_char[$i],
 					'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path.$topic_icon_img[$i]. "' alt=''>",
 					'TOPIC_TITLE'           	=> $topic_title[$i],
 					'TOPIC_LINK'            	=> append_sid("{$phpbb_root_path}viewtopic.$this->phpEx", 't='.$row1['topic_id']),
-					'FORUM_LINK'		 		=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
+					'FORUM_LINK'		 	    => append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
 					'FORUM_NAME'        		=> $forum_name_cor[$i],
 					'TOPIC_REPLIES'         	=> $topic_replies[$i],
 					'TOPIC_VIEWS'         	    => $topic_views[$i],
 					'TOPIC_AUTHOR'          	=> $topic_author[$i],
 					'TOPIC_AUTHOR_FULL'     	=> $topic_author_full[$i],
 					'FIRST_POST_TIME'       	=> $first_post_time[$i],
-					'LAST_POST_TIME'			=> $last_post_time[$i], 
+					'LAST_POST_TIME'		    => $last_post_time[$i], 
 					'LAST_POST_AUTHOR_FULL' 	=> $last_post_author_full[$i],
 					'LAST_POST_LINK'			=> $last_post_link[$i], 
 					));
@@ -285,19 +279,11 @@ class listener implements EventSubscriberInterface
 				$this->template->assign_vars(array(
 				'FORUM_LIST_COR' 	=> $where_list,
 				'TOTAL_TOPICS'		=> $total_topics,
-				'FIRST_TOPIC'		=> $start + 1,
-				'LAST_TOPIC'		=> $end_topic,
-				'TOTAL_PAGES' 		=> $total_pages,
-				'PAGE_COR' 			=> $page_cor,
-				'START' 			=> $start,
-				'PER_PAGE'			=> $per_page,
-				'MULTIPAGES'		=> $multipages,
 				));
 			$cerca	= '';
-		}elseif ($user_cor > 0)
+		}elseif($user_cor != 0)
 		{
-			// #############   RICERCA PER USER_ID   ##################
-				//echo "User_cor " . $user_cor . " <br>";
+				//echo "selezione per user_id = " . $user_cor . " <br>";
 				//QUERY DI SELEZIONE DEI DATI 
 				$sql1 = "SELECT 
 				t.topic_id, t.icon_id, t.topic_title, t.topic_time, 
@@ -344,7 +330,7 @@ class listener implements EventSubscriberInterface
 					$topic_link[$i]				= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", 't='.$row1['topic_id']);
 					$forum_link[$i]				= append_sid("{$this->root_path}viewforum.{$this->phpEx}", 'f='.$row1['forum_id']);
 					$forum_name_cor[$i]			= $row1['forum_name_cor'];
-					$topic_replies[$i]			= $row1['topic_replies'];
+					//$topic_replies[$i]			= $row1['topic_replies'];
 					$topic_views[$i]			= $row1['topic_views'];
 					$topic_author[$i]			= $row1['topic_first_poster_name'];
 					$topic_author_full[$i]		= get_username_string('full', $row1['topic_poster'], $row1['topic_first_poster_name'], $row1['topic_first_poster_colour']);
@@ -352,29 +338,34 @@ class listener implements EventSubscriberInterface
 					$last_post_time[$i]			= $this->user->format_date($row1['topic_last_post_time']);
 					$last_post_author_full[$i]	= get_username_string('full', $row1['topic_last_poster_id'], $row1['topic_last_poster_name'], $row1['topic_last_poster_colour']);
 					$last_post_link[$i]			= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", "f=" . $row1['forum_id'] . "&amp;p=" . $row1['topic_last_post_id'] . "#p" . $row1['topic_last_post_id']);
-				
-					$reply = "SELECT COUNT(post_id) AS tot_replies FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
-					$result2 = $this->db->sql_query($reply);
-					$row2 = $this->db->sql_fetchrow($result2);
-					$topic_replies[$i]			= $row2['tot_replies'] - 1;
-                    //echo "TITOLO: " . $topic_title[$i] . "<br>";
+				    $phpbb_root_path            = $this->root_path;
 
+					$reply = "SELECT post_id FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
+				    $result2 = $this->db->sql_query($reply);
+				    $rep= 0;
+				    while($row2 = $this->db->sql_fetchrow($result2))
+				    {
+					  ++$rep;
+				    }
+				    $topic_replies[$i]			= $rep;
+					$phpbb_root_path            = $this->root_path;
+					
 					$this->template->assign_block_vars('topic_list', array(
 					'TOPIC_NUMBER'				=> $topic_number[$i],
 					'S_FIRST_ROW'          	 	=> $first_row[$i],
-					'BG_ROW'           			=> $bg_row,
+					'BG_ROW'           		    => $bg_row,
 					'FIRST_CHAR'           		=> $first_char[$i],
 					'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path.$topic_icon_img[$i]. "' alt=''>",
 					'TOPIC_TITLE'           	=> $topic_title[$i],
 					'TOPIC_LINK'            	=> append_sid("{$phpbb_root_path}viewtopic.$this->phpEx", 't='.$row1['topic_id']),
-					'FORUM_LINK'		 		=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
+					'FORUM_LINK'		 	    => append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
 					'FORUM_NAME'        		=> $forum_name_cor[$i],
 					'TOPIC_REPLIES'         	=> $topic_replies[$i],
 					'TOPIC_VIEWS'         	    => $topic_views[$i],
 					'TOPIC_AUTHOR'          	=> $topic_author[$i],
 					'TOPIC_AUTHOR_FULL'     	=> $topic_author_full[$i],
 					'FIRST_POST_TIME'       	=> $first_post_time[$i],
-					'LAST_POST_TIME'			=> $last_post_time[$i], 
+					'LAST_POST_TIME'		    => $last_post_time[$i], 
 					'LAST_POST_AUTHOR_FULL' 	=> $last_post_author_full[$i],
 					'LAST_POST_LINK'			=> $last_post_link[$i], 
 					));
@@ -387,31 +378,27 @@ class listener implements EventSubscriberInterface
 				$this->template->assign_vars(array(
 				'FORUM_LIST_COR' 	=> $where_list,
 				'TOTAL_TOPICS'		=> $total_topics,
-				'FIRST_TOPIC'		=> $start + 1,
-				'LAST_TOPIC'		=> $end_topic,
-				'TOTAL_PAGES' 		=> $total_pages,
-				'PAGE_COR' 			=> $page_cor,
-				'START' 			=> $start,
-				'PER_PAGE'			=> $per_page,
-				'MULTIPAGES'		=> $multipages,
-				));			
+				));
 		}
-		else{
+		else
+		{
 			// #############   RICERCA PER TOPIC   ##################
-			//CONTEGGIO DEL NUMERO DEGLI ARGOMENTI (Topics)
-			$tot = $this->db->sql_query("SELECT t.forum_id, t.topic_id, count(t.topic_id) AS total
-			FROM ". TOPICS_TABLE." t
-			WHERE t.forum_id IN($where_list)
-			AND t.topic_moved_id = 0
-			AND t.topic_last_post_time  > $data_post
-			ORDER BY t.topic_id");
-			$row_tot = $this->db->sql_fetchrow($tot);	
-			
-			//echo "Totale pagine: " . $total_pages . " page_cor: " . $page_cor . "<br>";
-			
+			// CONTEGGIO DEL NUMERO DEGLI ARGOMENTI (Topics) NEW
+			$tot = $this->db->sql_query("SELECT * FROM ". TOPICS_TABLE." 
+			WHERE forum_id IN($where_list)
+			AND topic_moved_id = 0
+			AND topic_last_post_time  > $data_post
+			ORDER BY topic_id");
+			$n=0;
+			while ($tot_row = $this->db->sql_fetchrow($tot))
+			{
+				++$n;
+			}    
+			$total_topics  = $n;
 			//####################################################
-			$total_topics	= $row_tot['total'];    				// totale dei topics selezionati
-			$per_page		= 100 ;               				// records per pagina			
+			
+			echo "total_topics = " . $total_topics . "<br>";
+            // records per pagina			
 			$total_pages 	= ceil($total_topics / $per_page);  // totale pagine
 			$end_topic		= $start + $per_page ;      		// ultimo record della lista
 			if( $start == '' or $start == 0)
@@ -425,243 +412,22 @@ class listener implements EventSubscriberInterface
 			{
 				$end_topic	= $total_topics;
 			}
-			// NUMERATORI DI PAGINA
-			if( $total_pages == 1 )
+
+			for($xx = 1; $xx < 12 ; ++$xx )
 			{
-				//
-				// UNA SOLA PAGINA
-				$limit		= '';
-				$multipages	= false ;
-				$this->template->assign_block_vars('page_topiclist', array(
-					'PAGE_NUMBER'	=> '',
-					'PAGE_URL'		=> '',
-					'S_IS_CURRENT'	=> false,
-					'S_IS_PREV'		=> false,
-					'S_IS_NEXT'		=> false,
-					'S_IS_ELLIPSIS'	=> false,
-				));
-			}elseif( $total_pages > 1 && $total_pages < 6 )
-			{
-				//echo "MODE 2 - Totale pagine: " . $total_pages . " page_cor: " . $page_cor . "<br>";
-				// NUMERO DI PAGINE INFERIORE A 6
-				$limit	= " LIMIT $start,$per_page";
-				$multipages	= true ;
-				for($x = 1; $x < $total_pages +1; ++$x )
+				if($page_view[$xx])
 				{
-					
-					if( $x == $page_cor)
-					{
-						$page_number[$x]	= $x ;
-						$is_current[$x]		= true ;
-						$is_next[$x]		= false ;
-						$is_prev[$x]		= false ;
-					}else{	
-						$page_number[$x]	= $x ;
-						$start_page[$x]		= (($per_page * $x) - $per_page);
-						$page_url[$x]		= $base_url . "&amp;start=" . $start_page[$x] ;
-						$is_current[$x]		= '' ;
-					}
 					$this->template->assign_block_vars('page_topiclist', array(
-					'PAGE_NUMBER'	=> $page_number[$x],
-					'PAGE_URL'		=> $page_url[$x] ,
-					'S_IS_CURRENT'	=> $is_current[$x],
+					'PAGE_VIEW'			=> $page_view[$xx],
+					'PAGE_NUMBER'		=> $page_number[$xx],
+					'PAGE_URL'			=> $page_url[$xx] ,
+					'S_IS_CURRENT'		=> $is_current[$xx],
+					'S_IS_NEXT'			=> $is_next[$xx],
+					'S_IS_PREV'			=> $is_prev[$xx],
+					'S_IS_ELLIPSIS'		=> $ellipsis[$xx],
 					));
 				}
-				//echo "Mode 2 = Lista suddivisa in " . $total_pages . " pagine<br>";				
-			}elseif( $total_pages > 5 && $page_cor < 6 )  // PAGINA CORRENTE MINORE DI 6
-			{
-				//echo "MODE 3 - Totale pagine: " . $total_pages . " page_cor: " . $page_cor . "<br>";
-				// NUMERO DI PAGINE SUPERIORE A 5 - 
-				$limit	= " LIMIT $start,$per_page";
-				$multipages	= true ;
-					// Pagina corrente tra le prime 5
-					
-					
-					for($x = 1; $x < $total_pages + 1 ; ++$x )
-					{				
-						if( $x == $page_cor){
-							// Pagina corrente
-							$page_view[$x]		= true ;
-							$page_number[$x]	= $x ;
-							$start_page[$x]		= (($per_page * $x) - $per_page);
-							$start_next			= ($per_page * $x);
-							$is_current[$x]		= true ;
-							$is_next[$x]		= false ;
-							$is_prev[$x]		= false ;
-						}elseif($x < 6 && $x > $page_cor -3 || $x < $page_cor + 2){
-							$page_view[$x]		= true ;
-							$page_number[$x]	= $x ;
-							$start_page[$x]		= (($per_page * $x) - $per_page);
-							$page_url[$x]		= $base_url . "&amp;start=" . $start_page[$x] ;
-							$is_current[$x]		= '' ;	
-						}elseif($x < 6 && $x < $page_cor -3){
-							
-						}elseif($x > 6 && $x < $total_pages -2){
-							$page_view[$x]		= false ;
-							$page_number[$x]	= '' ;
-							$start_page[$x]		= '' ;
-							$page_url[$x]		= '' ;
-							$is_current[$x]		= '' ;
-						}elseif($x == $total_pages - 1){
-							$page_view[$x]		= true ;
-							$ellipsis[$x]		= true ;
-						}elseif($x == $total_pages ){						
-							$page_view[$x]		= true ;
-							$page_number[$x]	= $x ;
-							$start_page[$x]		= (($per_page * $x) - $per_page);
-							$page_url[$x]		= $base_url . "&amp;start=" . $start_page[$x] ;
-							$is_current[$x]		= '' ;	
-						}elseif($x == $total_pages + 1 ){	
-							$page_view[$x]		= true ;
-							$is_next[$x]		= true ;
-						}else{
-							$page_view[$x]		= false ;
-							$page_number[$x]	= '' ;
-						}
-					}
-			}elseif($total_pages > 5 && $page_cor > 5  && $page_cor < $total_pages -2 )  
-			{
-				//echo "MODE 4 - Totale pagine: " . $total_pages . " page_cor: " . $page_cor . "<br>";
-				$limit	= " LIMIT $start,$per_page";
-				$multipages	= true ;
-				
-						$page_view[1]			= true ;
-						$is_prev[1]				= true ;
-						$start_page[1]			= (($per_page * $page_cor) - ($per_page * 2));
-						$page_url[1]			= $base_url . "&amp;start=" . $start_page[1] ;	
-						
-						$page_view[2]			= true ;
-						$page_number[2]			= 1 ;
-						$start_page[2]			= 0 ;
-						$page_url[2]			= $base_url . "&amp;start=" . $start_page[2] ;	
-						
-						$page_view[3]			= true ;
-						$ellipsis[3]			= true;							
-						
-						$page_view[4]			= true ;
-						$page_number[4]			= $page_cor - 2 ;						
-						$start_page[4]			= (($per_page * $page_number[4]) - $per_page);
-						$page_url[4]			= $base_url . "&amp;start=" . $start_page[4] ;	
-						
-						$page_view[5]			= true ;
-						$page_number[5]			= $page_cor - 1 ;
-						$start_page[5]			= (($per_page * $page_number[5]) - $per_page);
-						$page_url[5]			= $base_url . "&amp;start=" . $start_page[5] ;
-						
-						$page_view[6]			= true ;
-						$page_number[6]			= $page_cor ;
-						$is_current[6]			= true ;						
-						
-						$page_view[7]			= true ;
-						$page_number[7]			= $page_cor + 1;
-						$start_page[7]			= (($per_page * $page_number[7]) - $per_page);
-						$page_url[7]			= $base_url . "&amp;start=" . $start_page[7] ;
-						if($page_number[7]	== $total_pages ){$page_view[7] = false ;}
-						
-						$page_view[8]			= true ;
-						$page_number[8]			= $page_cor + 2;
-						$start_page[8]			= (($per_page * $page_number[8]) - $per_page);
-						$page_url[8]			= $base_url . "&amp;start=" . $start_page[8] ;
-						if($page_number[8] == $total_pages){$page_view[8] = false ;}
-						
-						$page_view[9]			= true ;
-						$ellipsis[9]			= true;
-						
-						$page_view[10]			= true ;
-						$page_number[10]		= $total_pages;
-						$start_page[10]			= (($per_page * $page_number[10]) - $per_page);
-						$page_url[10]			= $base_url . "&amp;start=" . $start_page[10] ;
-						
-						$page_view[11]			= true ;
-						$is_next[11]			= true;	
-						$start_page[11]			= ($per_page * $page_cor);
-						$page_url[11]			= $base_url . "&amp;start=" . $start_page[11] ;
-						if($page_cor == $total_pages){$page_view[11] = false ;}				
-			}else{
-				//echo "MODE 5 - Totale pagine: " . $total_pages . " page_cor: " . $page_cor . "<br>";
-				$limit	= " LIMIT $start,$per_page";
-				$multipages	= true ;
-				$limit	= " LIMIT $start,$per_page";
-				$multipages	= true ;
-				
-						$page_view[1]			= true ;
-						$is_prev[1]				= true ;
-						$start_page[1]			= (($per_page * $page_cor) - ($per_page * 2));
-						$page_url[1]			= $base_url . "&amp;start=" . $start_page[1] ;	
-						
-						$page_view[2]			= true ;
-						$page_number[2]			= 1 ;
-						$start_page[2]			= 0 ;
-						$page_url[2]			= $base_url . "&amp;start=" . $start_page[2] ;	
-						
-						$page_view[3]			= true ;
-						$ellipsis[3]			= true;	
-						
-						$page_view[4]			= true ;
-						$page_number[4]			= $page_cor - 2 ;						
-						$start_page[4]			= (($per_page * $page_number[4]) - $per_page);
-						$page_url[4]			= $base_url . "&amp;start=" . $start_page[4] ;	
-						
-						$page_view[5]			= true ;
-						$page_number[5]			= $page_cor - 1 ;
-						$start_page[5]			= (($per_page * $page_number[5]) - $per_page);
-						$page_url[5]			= $base_url . "&amp;start=" . $start_page[5] ;
-						
-						$page_view[6]			= true ;
-						$page_number[6]			= $page_cor ;
-						$is_current[6]			= true ;						
-						
-						$page_view[7]			= true ;
-						$page_number[7]			= $page_cor + 1;
-						$start_page[7]			= (($per_page * $page_number[7]) - $per_page);
-						$page_url[7]			= $base_url . "&amp;start=" . $start_page[7] ;
-						if($page_number[7]	== $total_pages ){$page_view[7] = false ;}
-						
-						$page_view[8]			= true ;
-						$page_number[8]			= $page_cor + 2;
-						$start_page[8]			= (($per_page * $page_number[8]) - $per_page);
-						$page_url[8]			= $base_url . "&amp;start=" . $start_page[8] ;
-						if($page_number[8]	>= $total_pages ){$page_view[8] = false ;}
-						
-						$page_view[9]			= true ;
-						$ellipsis[9]			= true;
-						
-						$page_view[10]			= true ;
-						$page_number[10]		= $total_pages;
-						$start_page[10]			= (($per_page * $page_number[10]) - $per_page);
-						$page_url[10]			= $base_url . "&amp;start=" . $start_page[10] ;						
-						
-						$page_view[11]			= true ;
-						$is_next[11]			= true;	
-						$start_page[11]			= ($per_page * $page_cor);
-						$page_url[11]			= $base_url . "&amp;start=" . $start_page[11] ;
-						if($page_cor == $total_pages){$page_view[11] = false ;}
 			}
-					for($x = 1; $x < 12 ; ++$x )
-					{
-						if($page_view[$x])
-						{
-							$this->template->assign_block_vars('page_topiclist', array(
-							'PAGE_VIEW'			=> $page_view[$x],
-							'PAGE_NUMBER'		=> $page_number[$x],
-							'PAGE_URL'			=> $page_url[$x] ,
-							'S_IS_CURRENT'		=> $is_current[$x],
-							'S_IS_NEXT'			=> $is_next[$x],
-							'S_IS_PREV'			=> $is_prev[$x],
-							'S_IS_ELLIPSIS'		=> $ellipsis[$x],
-							));
-						}
-					}
-
-
-			//echo "root: " . $this->root_path . "<br>";
-			//echo "Lista forum visibili: " . $where_list . "<br>";
-			//echo "totale topics: " . $total_topics . "<br>";
-			//echo "records per pagina: " . $per_page . "<br>";
-			//echo "totale pagine: " . $total_pages . "<br>";
-			//echo "pagina corrente: " . $page_cor . "<br>";
-			//echo "start: " . $start . "<br>";
-			//echo "end topic: " . $end_topic . "<br>";
 
 			$this->template->assign_vars(array(
 				'FORUM_LIST_COR' 	=> $where_list,
@@ -688,7 +454,7 @@ class listener implements EventSubscriberInterface
 			AND f.forum_id = t.forum_id
 			AND t.topic_moved_id = 0
 			AND t.topic_last_post_time  > $data_post
-			ORDER BY UCASE(t.topic_title)". $limit;
+			ORDER BY UCASE(t.topic_title)";
 			$this->db->sql_query($sql1);
 			$result1 = $this->db->sql_query($sql1);
 			$current_char = '';
@@ -721,7 +487,7 @@ class listener implements EventSubscriberInterface
 				$topic_link[$i]				= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", 't='.$row1['topic_id']);
 				$forum_link[$i]				= append_sid("{$this->root_path}viewforum.{$this->phpEx}", 'f='.$row1['forum_id']);
 				$forum_name_cor[$i]			= $row1['forum_name_cor'];
-				$topic_replies[$i]			= $row1['topic_replies'];
+				//$topic_replies[$i]			= $row1['topic_replies'];
 				$topic_views[$i]			= $row1['topic_views'];
 				$topic_author[$i]			= $row1['topic_first_poster_name'];
 				$topic_author_full[$i]		= get_username_string('full', $row1['topic_poster'], $row1['topic_first_poster_name'], $row1['topic_first_poster_colour']);
@@ -729,18 +495,23 @@ class listener implements EventSubscriberInterface
 				$last_post_time[$i]			= $this->user->format_date($row1['topic_last_post_time']);
 				$last_post_author_full[$i]	= get_username_string('full', $row1['topic_last_poster_id'], $row1['topic_last_poster_name'], $row1['topic_last_poster_colour']);
 				$last_post_link[$i]			= append_sid("{$this->root_path}viewtopic.{$this->phpEx}", "f=" . $row1['forum_id'] . "&amp;p=" . $row1['topic_last_post_id'] . "#p" . $row1['topic_last_post_id']);
-				
-				$reply = "SELECT COUNT(post_id) AS tot_replies FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
+
+				$reply = "SELECT post_id FROM " . POSTS_TABLE . " WHERE topic_id = $topic_id[$i]";
 				$result2 = $this->db->sql_query($reply);
-				$row2 = $this->db->sql_fetchrow($result2);
-				$topic_replies[$i]			= $row2['tot_replies'] - 1;
+				$rep= 0;
+				while($row2 = $this->db->sql_fetchrow($result2))
+				{
+					++$rep;
+				}
+				$topic_replies[$i]			= $rep;
+				$phpbb_root_path            = $this->root_path;
 				
 				$this->template->assign_block_vars('topic_list', array(
 				'TOPIC_NUMBER'				=> $topic_number[$i],
 				'S_FIRST_ROW'          	 	=> $first_row[$i],
 				'BG_ROW'           			=> $bg_row,
 				'FIRST_CHAR'           		=> $first_char[$i],
-				'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path.$topic_icon_img[$i]. "' alt=''>",
+				'TOPIC_ICON_IMG'        	=> "<img src='".$phpbb_root_path."/".$topic_icon_img[$i]. "' alt=''>",
 				'TOPIC_TITLE'           	=> $topic_title[$i],
 				'TOPIC_LINK'            	=> append_sid("{$phpbb_root_path}viewtopic.$this->phpEx", 't='.$row1['topic_id']),
 				'FORUM_LINK'		 		=> append_sid("{$phpbb_root_path}viewforum.$this->phpEx", 'f='.$row1['forum_id']),
