@@ -85,7 +85,7 @@ class listener implements EventSubscriberInterface
 		 }else{
             $start   = (($page_cor * $per_page) - $per_page);
 		 }
-         echo "page_cor = "  . $page_cor . "  start = " . $start . "<br>";
+         //echo "page_cor = "  . $page_cor . "  start = " . $start . "<br>";
       
          // PERIODO DI RICERCA         
          //echo "Periodo di ricerca: " . $time_cor . "<br>";
@@ -196,7 +196,7 @@ class listener implements EventSubscriberInterface
       //#################################
 	  switch ($mode) {
         case 1:
-          echo "mode=1 - tutti i records";
+          //echo "mode=1 - tutti i records";
 		   $sql1 = "SELECT 
           t.topic_id, t.icon_id, t.topic_title, t.topic_time, 
           t.topic_moved_id, t.topic_first_poster_name, t.topic_poster, t.topic_views, t.topic_first_poster_colour, t.topic_last_post_id,
@@ -217,7 +217,7 @@ class listener implements EventSubscriberInterface
           $string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
           break;
         case 2:
-          echo "mode=2 - cerca stringa titolo";
+          //echo "mode=2 - cerca stringa titolo";
 		  $stringa_cor = "%".$cerca."%";
           //QUERY DI SELEZIONE DEI DATI PER STRINGA
           $sql1 = "SELECT 
@@ -242,7 +242,7 @@ class listener implements EventSubscriberInterface
           //$cerca   = '';
           break;
         case 3:
-          echo "mode=3 - argomenti per user_id";
+          //echo "mode=3 - argomenti per user_id";
 		  //QUERY DI SELEZIONE DEI DATI PER USER_ID
           $sql1 = "SELECT 
           t.topic_id, t.icon_id, t.topic_title, t.topic_time, 
